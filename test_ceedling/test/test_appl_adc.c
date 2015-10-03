@@ -10,11 +10,9 @@
 //-- module being tested
 #include "appl_adc.h"
 
-//-- other modules that need to be compiled
-#include "adc_handler.h"
-
 //-- mocked modules
 #include "mock_bsp_adc.h"
+#include "mock_adc_handler.h"
 
 
 /*******************************************************************************
@@ -41,6 +39,13 @@
 
 void setUp(void)
 {
+    //-- ADC handler constructor is going to be called for each channel.
+    //   Mocked constructors all return ADC_HANDLER_RES__OK.
+    enum E_ApplAdcChannel channel;
+    for (channel = 0; channel < APPL_ADC_CH_CNT; channel++){
+        adc_handler__ctor_IgnoreAndReturn(ADC_HANDLER_RES__OK);
+    }
+
     //-- before each test, re-initialize appl_adc module
     appl_adc__init();
 }
@@ -65,8 +70,12 @@ void test_voltage_get(void)
             APPL_ADC_CH__I_SETT,
 
             //-- and the value that bsp_adc__value__get() should return
-            (0x3ff / 2)
+            123
             );
+
+    //-- Expect call to adc_handler__voltage__get_by_counts_value(),
+    //   ignoring arguments. The mocked version just returns 456.
+    adc_handler__voltage__get_by_counts_value_IgnoreAndReturn(456);
 
     //-- actually call the function being tested, that should perform
     //   all pending expected calls
@@ -74,10 +83,8 @@ void test_voltage_get(void)
             APPL_ADC_CH__I_SETT
             );
 
-    //-- check the voltage returned (we assume that adc_handler is initialized
-    //   with the same params, where 0x3ff is the maximum ADC value, and
-    //   it corresponds to the value (10 * ADC_HANDLER__SCALE_FACTOR__U))
-    TEST_ASSERT_EQUAL_INT((5 * ADC_HANDLER__SCALE_FACTOR__U), voltage);
+    //-- check the voltage returned (it should be 456 from the mock above)
+    TEST_ASSERT_EQUAL_INT(456, voltage);
 }
 
 
