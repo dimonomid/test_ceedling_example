@@ -72,6 +72,31 @@ void test_ctor_ok(void)
     TEST_ASSERT_EQUAL_INT(ADC_HANDLER_RES__OK, _ctor_result);
 }
 
+void test_counts_to_voltage(void)
+{
+    T_ADCHandler_Voltage voltage;
+
+
+    //------------------------------------------------------------------
+    voltage = adc_handler__voltage__get_by_counts_value(
+            &_adc_handler, 0
+            );
+    TEST_ASSERT_EQUAL_INT(0/*V*/ * ADC_HANDLER__SCALE_FACTOR__U, voltage);
+
+
+    //------------------------------------------------------------------
+    voltage = adc_handler__voltage__get_by_counts_value(
+            &_adc_handler, 0x3ff
+            );
+    TEST_ASSERT_EQUAL_INT(10/*V*/ * ADC_HANDLER__SCALE_FACTOR__U, voltage);
+
+
+    //------------------------------------------------------------------
+    voltage = adc_handler__voltage__get_by_counts_value(
+            &_adc_handler, 0x3ff / 3
+            );
+    TEST_ASSERT_EQUAL_INT((3.33/*V*/ * ADC_HANDLER__SCALE_FACTOR__U), voltage);
+}
 
 
 
