@@ -13,6 +13,7 @@
 //-- mocked modules
 #include "mock_bsp_adc.h"
 #include "mock_adc_handler.h"
+#include "mock_xc.h"
 
 
 /*******************************************************************************
@@ -101,6 +102,18 @@ void test_voltage_get(void)
 
     //-- check the voltage returned (it should be 456 from the mock above)
     TEST_ASSERT_EQUAL_INT(456, voltage);
+}
+
+void test_voltage_get_wrong_channel_number(void)
+{
+    //-- we expect __builtin_software_breakpoint() to be called ...
+    __builtin_software_breakpoint_Expect();
+
+    //-- ... when we call appl_adc__voltage__get() with illegal
+    //   channel number.
+    appl_adc__voltage__get(
+            APPL_ADC_CH_CNT
+            );
 }
 
 

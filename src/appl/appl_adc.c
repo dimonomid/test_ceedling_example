@@ -12,6 +12,8 @@
 #include "appl_adc_channels.h"
 #include "bsp_adc.h"
 
+#include "xc.h"
+
 /*******************************************************************************
  *    DEFINITIONS
  ******************************************************************************/
@@ -87,10 +89,19 @@ void appl_adc__init(void)
 
 T_ADCHandler_Voltage appl_adc__voltage__get(enum E_ApplAdcChannel channel_num)
 {
-    return adc_handler__voltage__get_by_counts_value(
-            &_adc_handlers[ channel_num ],
-            bsp_adc__value__get(channel_num)
-            );
+    T_ADCHandler_Voltage ret = 0;
+
+    if (channel_num < APPL_ADC_CH_CNT){
+        ret = adc_handler__voltage__get_by_counts_value(
+                &_adc_handlers[ channel_num ],
+                bsp_adc__value__get(channel_num)
+                );
+    } else {
+        //-- illegal channel_num given: should never be here
+        __builtin_software_breakpoint();
+    }
+
+    return ret;
 }
 
 
