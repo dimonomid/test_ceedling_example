@@ -153,7 +153,7 @@ void itoae(uint8_t *p_buf, int value, int dpp, int min_len, uint8_t fill_char)
     if (dpp > 0){
         int i;
         for (i = 0; i < (dpp + 1/*null-terminate*/); i++){
-            p_buf[len - i] = p_buf[len - i - 1];
+            p_buf[len - i + 1] = p_buf[len - i];
         }
         p_buf[len - dpp] = '.';
 
