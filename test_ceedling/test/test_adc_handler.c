@@ -7,7 +7,7 @@
 //-- unity: unit test framework
 #include "unity.h"
 
-//-- module being tested: dtp
+//-- module being tested
 #include "adc_handler.h"
 
 
